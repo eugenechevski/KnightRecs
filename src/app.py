@@ -184,6 +184,8 @@ if __name__ == '__main__':
     
     # Run Flask app
     # CRITICAL: Use host="0.0.0.0" to make it accessible in Docker container
-    print("Starting Flask server on http://0.0.0.0:5000")
+    # Use environment variable for port (default 5000, but can be changed for local testing)
+    port = int(os.environ.get('PORT', 5000))
+    print(f"Starting Flask server on http://0.0.0.0:{port}")
     print("Press CTRL+C to stop\n")
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=False)
