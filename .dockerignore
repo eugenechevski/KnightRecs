@@ -1,0 +1,36 @@
+# Exclude large dataset files from Docker image
+ml-latest/ratings.csv
+ml-latest/tags.csv
+ml-latest/genome-scores.csv
+ml-latest/genome-tags.csv
+ml-latest/links.csv
+ml-latest/README.txt
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Documentation
+README.md
