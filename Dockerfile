@@ -20,7 +20,7 @@ COPY src/ ./src/
 # Copy trained model and necessary data files
 # Note: model.pkl must be trained before building the image
 COPY model.pkl .
-COPY trainset.pkl .
+COPY user_rated_items.pkl .
 COPY ml-latest/movies.csv ./ml-latest/movies.csv
 
 # Expose Flask port

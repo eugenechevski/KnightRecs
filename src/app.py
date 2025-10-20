@@ -36,27 +36,15 @@ def load_model_and_data():
         model = pickle.load(f)
     print("✓ Model loaded")
     
-    # Load trainset (for getting user's rated items)
-    with open("trainset.pkl", "rb") as f:
-        trainset = pickle.load(f)
-    print("✓ Trainset loaded")
+    # Load user-rated items mapping (for filtering)
+    with open("user_rated_items.pkl", "rb") as f:
+        user_rated_items = pickle.load(f)
+    print(f"✓ Loaded {len(user_rated_items):,} users' rating history")
     
     # Load movies data
     movies_path = os.path.join("ml-latest", "movies.csv")
     movies_df = pd.read_csv(movies_path)
     print(f"✓ Loaded {len(movies_df):,} movies")
-    
-    # Build a mapping of users to their rated items (for filtering)
-    print("Building user-item mapping...")
-    user_rated_items = {}
-    for uid, iid, _ in trainset.all_ratings():
-        # Convert inner IDs back to raw IDs
-        raw_uid = trainset.to_raw_uid(uid)
-        raw_iid = trainset.to_raw_iid(iid)
-        if raw_uid not in user_rated_items:
-            user_rated_items[raw_uid] = set()
-        user_rated_items[raw_uid].add(raw_iid)
-    print(f"✓ Mapped {len(user_rated_items):,} users")
     
     print("Ready to serve recommendations!\n")
 
@@ -67,23 +55,39 @@ def get_recommendations(user_id: int, n: int = 5) -> List[Dict]:
     Exclude movies the user has already rated.
     Return list of dicts with movieId, title, predicted_rating.
     """
+    import numpy as np
+    
     # Check if user exists in training data
     if user_id not in user_rated_items:
+        return None
+    
+    # Check if user is in model's user mapping
+    if user_id not in model['user_to_idx']:
         return None
     
     # Get movies the user has already rated
     seen_movies = user_rated_items[user_id]
     
-    # Get all movie IDs
-    all_movie_ids = movies_df['movieId'].tolist()
+    # Get user index in model
+    user_idx = model['user_to_idx'][user_id]
+    
+    # Get all movie IDs from the model
+    all_movie_ids = model['movie_ids']
     
     # Predict ratings for unseen movies
     predictions = []
     for movie_id in all_movie_ids:
-        if movie_id not in seen_movies:
-            # Predict rating for this movie
-            pred = model.predict(user_id, movie_id)
-            predictions.append((movie_id, pred.est))
+        if movie_id not in seen_movies and movie_id in model['movie_to_idx']:
+            # Get movie index
+            movie_idx = model['movie_to_idx'][movie_id]
+            
+            # Predict rating: U[user] * Sigma * Vt[:, movie]
+            pred = np.dot(np.dot(model['U'][user_idx, :], model['sigma']), 
+                          model['Vt'][:, movie_idx])
+            
+            # Clip to valid rating range
+            pred = np.clip(pred, 0.5, 5.0)
+            predictions.append((movie_id, pred))
     
     # Sort by predicted rating (descending) and take top N
     predictions.sort(key=lambda x: x[1], reverse=True)
@@ -100,7 +104,7 @@ def get_recommendations(user_id: int, n: int = 5) -> List[Dict]:
                 'movieId': int(movie_id),
                 'title': title,
                 'genres': genres,
-                'predicted_rating': round(predicted_rating, 2)
+                'predicted_rating': round(float(predicted_rating), 2)
             })
     
     return recommendations
