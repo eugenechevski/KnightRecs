@@ -1,0 +1,29 @@
+# MovieLens Dataset
+
+This directory should contain the MovieLens `ml-latest` dataset.
+
+## Download Instructions
+
+The dataset is not included in this repository due to its large size (890+ MB).
+
+Download it from: https://grouplens.org/datasets/movielens/latest/
+
+1. Download `ml-latest.zip` from the link above
+2. Extract the contents to this directory (`ml-latest/`)
+3. You should have the following files:
+   - `ratings.csv` (890 MB)
+   - `movies.csv` (3 MB)
+   - `tags.csv` (81 MB)
+   - `genome-scores.csv` (497 MB)
+   - `genome-tags.csv`
+   - `links.csv`
+   - `README.txt`
+
+## Required for Training
+
+The model training script (`src/train.py`) requires:
+- `ratings.csv` - User ratings data
+- `movies.csv` - Movie titles and genres
+
+The API (`src/app.py`) only requires:
+- `movies.csv` - For displaying movie titles in recommendations

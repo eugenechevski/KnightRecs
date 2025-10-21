@@ -1,5 +1,6 @@
-# Dataset (already present, don't ignore)
-# ml-latest/
+# Dataset files (too large for GitHub)
+ml-latest/
+*.csv
 
 # Trained models (generated during training)
 model.pkl
