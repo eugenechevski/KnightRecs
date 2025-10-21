@@ -29,6 +29,26 @@ KnightRecs is an AI-powered movie recommendation system that uses **Singular Val
 - Python 3.13+ (or 3.10+)
 - Docker (for containerization)
 - AWS CLI (for deployment)
+- **MovieLens Dataset** (see download instructions below)
+
+### Download Dataset
+
+The MovieLens dataset is not included in this repository due to its large size (890+ MB).
+
+**Download and extract**:
+```bash
+# Download ml-latest.zip from MovieLens
+wget https://files.grouplens.org/datasets/movielens/ml-latest.zip
+
+# Extract to project directory
+unzip ml-latest.zip
+
+# Verify files exist
+ls ml-latest/
+# Should show: ratings.csv, movies.csv, tags.csv, etc.
+```
+
+Or manually download from: https://grouplens.org/datasets/movielens/latest/
 
 ### Installation
 
