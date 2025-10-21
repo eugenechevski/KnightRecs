@@ -131,9 +131,32 @@ docker run -p 5000:5000 knightrecs:latest
 curl "http://localhost:5000/recommend?user_id=76234&n=5"
 ```
 
+## CI/CD Pipeline
+
+KnightRecs includes an automated CI/CD pipeline using **GitHub Actions** that:
+- Runs tests and linting on every push
+- Builds and tests Docker images
+- Automatically deploys to AWS ECS on merge to `main`
+
+### Setup CI/CD
+
+See [docs/CICD_SETUP.md](docs/CICD_SETUP.md) for detailed instructions on:
+- Configuring GitHub secrets (AWS credentials)
+- Setting up AWS infrastructure (ECR, ECS, task definitions)
+- Customizing the pipeline
+- Troubleshooting common issues
+
+### Pipeline Status
+
+[![CI/CD Pipeline](https://github.com/eugenechevski/KnightRecs/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/eugenechevski/KnightRecs/actions/workflows/ci-cd.yml)
+
 ## AWS ECS/Fargate Deployment
 
-### 1. Push to Amazon ECR
+### Manual Deployment
+
+If you prefer manual deployment over CI/CD:
+
+#### 1. Push to Amazon ECR
 
 ```bash
 # Authenticate Docker to ECR
@@ -184,8 +207,14 @@ KnightRecs/
 ├── src/
 │   ├── train.py           # SVD model training script
 │   └── app.py             # Flask API service
-├── model.pkl              # Trained SVD model (gitignored)
-├── user_rated_items.pkl   # User rating history (gitignored)
+├── .github/
+│   ├── copilot-instructions.md  # AI agent guidelines
+│   └── workflows/
+│       └── ci-cd.yml            # GitHub Actions pipeline
+├── docs/
+│   └── CICD_SETUP.md           # CI/CD setup guide
+├── model.pkl                    # Trained SVD model (gitignored)
+├── user_rated_items.pkl         # User rating history (gitignored)
 ├── requirements.txt       # Python dependencies
 ├── Dockerfile             # Container definition
 ├── .dockerignore          # Exclude large files from image
